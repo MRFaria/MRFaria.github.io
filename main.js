@@ -7,6 +7,7 @@ var mainState = {
         game.load.image('player', 'assets/player.png');
         game.load.image('wallH', 'assets/wallHorizontal.png');
         game.load.image('wallV', 'assets/wallVertical.png');
+        game.load.image('coin', 'assets/coin.png');
     },
 
     create: function() {
@@ -23,10 +24,16 @@ var mainState = {
         this.createWorld();
     },
 
-
     update: function () {
         game.physics.arcade.collide(this.player, this.walls);
+        game.physics.arcade.collide(this.player, this.coin);
+        game.physics.arcade.collide(this.walls, this.coin);
+
         this.movePlayer();
+
+        if (!this.player.inWorld) {
+            this.playerDie();
+        }
     },
 
     movePlayer: function () {
@@ -62,25 +69,25 @@ var mainState = {
 
         game.add.sprite(0, 0, 'wallV', 0, this.walls); // Left wall
         game.add.sprite(480, 0, 'wallV', 0, this.walls); // Right wall
-        game.add.sprite(0, 0, 'wallH', this.walls);      // Top left
+        game.add.sprite(0, 0, 'wallH', 0, this.walls);      // Top left
         game.add.sprite(300, 0, 'wallH', 0, this.walls); // Top right
         game.add.sprite(0, 320, 'wallH', 0, this.walls); // Bottom left
         game.add.sprite(300, 320, 'wallH', 0, this.walls); // Bottom right
-
         game.add.sprite(-100, 160, 'wallH', 0, this.walls); // Middle left
         game.add.sprite(400, 160, 'wallH', 0, this.walls); // Middle right
-
         var middleTop = game.add.sprite(100, 80, 'wallH', 0, this.walls);
         middleTop.scale.setTo(1.5, 1);
-        var middleBottom = game.add.sprite(100, 240, 'wallH', 0,
-            this.walls);
+        var middleBottom = game.add.sprite(100, 240, 'wallH', 0, this.walls);
         middleBottom.scale.setTo(1.5, 1);
-
         this.walls.setAll('body.immovable', true);
-
         
+        this.coin = game.add.sprite(200, 200, 'coin');
+        game.physics.arcade.enable(this.coin);
+        this.coin.anchor.setTo(0.5, 0.5);
+    },
 
-
+    playerDie: function () {
+        game.state.start('main');
     },
 };
 
